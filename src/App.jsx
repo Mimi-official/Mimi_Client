@@ -1,11 +1,13 @@
 import './App.css'
-import Chat from './pages/Chat'
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
 
 function App() {
   return (
-    <>
-      <Chat/>
-    </>
+    <BrowserRouter>
+      <Routes>
+        
+      </Routes>
+    </BrowserRouter>
   )
 }
 
