@@ -146,7 +146,25 @@ const ButtonText = styled.span`
 
 
 // ---------------------------------------------------
-// 8. Login 컴포넌트
+// 9. 회원가입 텍스트 스타일 (⭐️ 새로 추가됨)
+// ---------------------------------------------------
+const SignupText = styled.a`
+  position: absolute;
+  left: 170px; /* ⭐️ X 좌표 적용 */
+  top: 767px; /* ⭐️ Y 좌표 적용 */
+
+  color: #A7ABA8; /* 명세 색상 */
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-decoration: none; /* 링크 밑줄 제거 */
+  cursor: pointer;
+`;
+
+// ---------------------------------------------------
+// 10. Login 컴포넌트
 // ---------------------------------------------------
 const Login = () => {
   return (
@@ -177,6 +195,9 @@ const Login = () => {
       <LoginButton>
         <ButtonText>로그인</ButtonText>
       </LoginButton>
+
+      {/* ⭐️ 회원가입 텍스트 추가 */}
+      <SignupText href="#">회원가입</SignupText>
 
     </Container>
   );
