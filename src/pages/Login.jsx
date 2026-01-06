@@ -107,7 +107,46 @@ const InputField = styled.input`
 `;
 
 // ---------------------------------------------------
-// 7. Login 컴포넌트
+// 7. 로그인 버튼 스타일 (⭐️ 새로운 명세 적용 완료)
+// ---------------------------------------------------
+const LoginButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px; 
+  
+  width: 328px; 
+  padding: 14px 78px; 
+  border-radius: 20px; 
+  background: #FF76BD; 
+  border: none;
+  cursor: pointer;
+
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 699px; 
+`;
+
+
+// ---------------------------------------------------
+// 8. 버튼 텍스트 스타일 (⭐️ 새로 추가됨)
+// ---------------------------------------------------
+const ButtonText = styled.span`
+  width: 168px;
+  flex-shrink: 0;
+  color: #FFF;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700; /* Bold */
+  line-height: 140%; 
+`;
+
+
+// ---------------------------------------------------
+// 8. Login 컴포넌트
 // ---------------------------------------------------
 const Login = () => {
   return (
@@ -133,8 +172,16 @@ const Login = () => {
           placeholder="비밀번호를 입력해주세요."
         />
       </PasswordLayout>
+
+      {/* 로그인 버튼 (내부에 ButtonText 적용) */}
+      <LoginButton>
+        <ButtonText>로그인</ButtonText>
+      </LoginButton>
+
     </Container>
   );
 };
+
+
 
 export default Login;
