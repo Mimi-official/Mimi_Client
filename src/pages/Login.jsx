@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// ---------------------------------------------------
-// 1. 전체 컨테이너
-// ---------------------------------------------------
+// 전체 컨테이너
 const Container = styled.div`
   width: 390px;
   height: 844px;
@@ -12,15 +10,13 @@ const Container = styled.div`
   position: relative; 
 `;
 
-// ---------------------------------------------------
-// 2. 로그인 타이틀
-// ---------------------------------------------------
+// 로그인 타이틀
 const LoginText = styled.div`
   color: #383838;
   font-family: Pretendard;
   font-size: 20px;
   font-style: normal;
-  font-weight: 600; /* 시각적 일치를 위해 500으로 설정 */
+  font-weight: 600; 
   line-height: normal;
 
   position: absolute; 
@@ -29,9 +25,7 @@ const LoginText = styled.div`
   top: 49px; 
 `;
 
-// ---------------------------------------------------
-// 3. 아이디 레이아웃 컨테이너
-// ---------------------------------------------------
+// 아이디 레이아웃 컨테이너
 const LoginLayout = styled.div`
   display: flex;
   width: 343px; 
@@ -44,9 +38,7 @@ const LoginLayout = styled.div`
   top: 207px; 
 `;
 
-// ---------------------------------------------------
-// 4. 비밀번호 레이아웃 컨테이너
-// ---------------------------------------------------
+// 비밀번호 레이아웃 컨테이너
 const PasswordLayout = styled.div`
   display: flex;
   width: 343px; 
@@ -59,21 +51,17 @@ const PasswordLayout = styled.div`
   top: 319px; 
 `;
 
-// ---------------------------------------------------
-// 5. 레이블 (아이디/비밀번호 글자) 스타일 (⭐️ 복구됨)
-// ---------------------------------------------------
+// 레이블 (아이디/비밀번호 글자) 스타일 
 const Label = styled.label`
-  color: #4E4E4E; /* 짙은 회색으로 복구 */
+  color: #4E4E4E; 
   font-family: Pretendard;
-  font-size: 16px; /* 16px로 복구 */
+  font-size: 16px; 
   font-style: normal;
-  font-weight: 600; /* 500으로 복구 */
+  font-weight: 600; 
   line-height: normal; 
 `;
 
-// ---------------------------------------------------
-// 6. 입력 필드 (Input) 스타일 (플레이스홀더만 회색으로 유지)
-// ---------------------------------------------------
+// 입력 필드 (Input) 스타일 
 const InputField = styled.input`
   box-sizing: border-box; 
   width: 100%; 
@@ -90,8 +78,8 @@ const InputField = styled.input`
   
   &:focus {
     outline: none; 
-    border-color: #4E4E4E; 
-    box-shadow: 0 0 0 1px #4E4E4E; 
+    border-color: #E9E9E9; 
+    box-shadow: none; 
   }
 
   &::placeholder {
@@ -106,9 +94,7 @@ const InputField = styled.input`
   }
 `;
 
-// ---------------------------------------------------
-// 7. 로그인 버튼 스타일 (⭐️ 새로운 명세 적용 완료)
-// ---------------------------------------------------
+// 로그인 버튼 스타일
 const LoginButton = styled.button`
   display: flex;
   justify-content: center;
@@ -128,10 +114,7 @@ const LoginButton = styled.button`
   top: 700px; 
 `;
 
-
-// ---------------------------------------------------
-// 8. 버튼 텍스트 스타일 (⭐️ 새로 추가됨)
-// ---------------------------------------------------
+// 버튼 텍스트 스타일 
 const ButtonText = styled.span`
   width: 168px;
   flex-shrink: 0;
@@ -144,16 +127,13 @@ const ButtonText = styled.span`
   line-height: 140%; 
 `;
 
-
-// ---------------------------------------------------
-// 9. 회원가입 텍스트 스타일 (⭐️ 새로 추가됨)
-// ---------------------------------------------------
+// 회원가입 텍스트 스타일 
 const SignupText = styled.a`
   position: absolute;
-  left: 170px; /* ⭐️ X 좌표 적용 */
-  top: 767px; /* ⭐️ Y 좌표 적용 */
+  left: 170px; 
+  top: 767px; 
 
-  color: #A7ABA8; /* 명세 색상 */
+  color: #A7ABA8; 
   font-family: Pretendard;
   font-size: 14px;
   font-style: normal;
@@ -163,9 +143,7 @@ const SignupText = styled.a`
   cursor: pointer;
 `;
 
-// ---------------------------------------------------
-// 10. Login 컴포넌트
-// ---------------------------------------------------
+// Login 컴포넌트
 const Login = () => {
   return (
     <Container>
@@ -196,7 +174,7 @@ const Login = () => {
         <ButtonText>로그인</ButtonText>
       </LoginButton>
 
-      {/* ⭐️ 회원가입 텍스트 추가 */}
+      {/* 회원가입 텍스트 */}
       <SignupText href="#">회원가입</SignupText>
 
     </Container>
