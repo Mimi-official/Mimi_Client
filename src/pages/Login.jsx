@@ -125,7 +125,7 @@ const LoginButton = styled.button`
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: 700; 
+  top: 700px; 
 `;
 
 
