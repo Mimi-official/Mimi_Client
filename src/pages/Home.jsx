@@ -8,7 +8,7 @@ const Container = styled.div`
   height: 844px; 
 
   background-color: #FF76BD;
-  
+
   margin: 0 auto; 
   display: flex;
   justify-content: center; /* 가로 중앙 정렬 */
