@@ -7,7 +7,7 @@ import Signup from '../pages/Signup';
 
 
 const LimRoutes = [
-    { path: "/home", element: <Home /> },
+    { path: "/", element: <Home /> },
     { path: "/login", element: <Login /> },
     { path: "/signup", element: <Signup /> }
 ];
