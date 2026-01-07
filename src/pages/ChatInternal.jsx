@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import BackIcon from '../assets/images/back_icon.svg?react';
 import ChatSendIcon from "../assets/images/chat_send.svg?react";
+import BotBubble from "../components/BotBubble";
+import UserBubble from "../components/UserBubble";
 
 const Container = styled.div`
     margin: 0 auto;
@@ -73,6 +75,38 @@ const SendBtnWapper = styled.div`
 
 export default function Chat() {
     const navigate = useNavigate();
+    const [messages, setMessages] = useState([
+        {
+            id: 1,
+            type: 'bot',
+            sender: '조원빈',
+            text: "쨍한 햇살 아래, 경주마들의 우렁찬 발굽 소리가 트랙을 가득 채우는...\n\n누구 찍으셨어요?\n후훗, 눈빛을 보니 보통 안목이 아니신 것 같아서요.",
+        },
+        {
+            id: 2,
+            type: 'user',
+            text: "당연히 아그네스 타키온을 찍었는데요?\n불만이라도? 있냐? 싶어?",
+        },
+    ]);
+    const [affection, setAffection] = useState(0);
+    const [inputText, setInputText] = useState("");
+    const scrollRef = useRef();
+
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+    const handleSend = () => {
+        if (!inputText.trim()) return;
+        console.log(inputText);
+        setMessages(prev => [
+            ...prev,
+            { id: Date.now(), type: 'sent', text: inputText }
+        ]);
+        setInputText("");
+    };
     const name = "조원빈";
     return (
         <Container>
@@ -90,9 +124,14 @@ export default function Chat() {
                 </ContentChat>
             </Main>
             <InputChat>
-                <InputText placeholder="내용을 입력하여 대화를 시작해주세요."/>
+                <InputText
+                    placeholder="내용을 입력하여 대화를 시작해주세요."
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                />
                 <SendBtnWapper>
-                    <ChatSendIcon/>
+                    <ChatSendIcon />
                 </SendBtnWapper>
             </InputChat>
         </Container>

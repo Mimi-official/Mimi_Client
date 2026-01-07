@@ -8,10 +8,12 @@ const BotProfile = styled.div`
     
 `;
 
-export default function BotChatBox() {
+export default function UserBubble() {
     return (
         <Container>
-
+            <BotProfile>
+                
+            </BotProfile>
         </Container>
     )
 };
