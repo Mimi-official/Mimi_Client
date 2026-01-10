@@ -18,11 +18,7 @@ const MobileWrapper = styled.div`
     padding-bottom: 109px;
 `;
 
-const StatusBar = styled.div`
-    height: 44px;
-    width: 100%;
-    background-color: #fdfdfd;
-`;
+
 
 const Header = styled.header`
     padding: 0px 20px;
@@ -87,14 +83,15 @@ const BottomNav = styled.nav`
     max-width: 390px;
     width: 100%;
     height: 109px;
-    background-color: #fff;
-    border-top: 1px solid #cecece;
     border-radius: 20px 20px 0 0;
+    border: 1px solid var(--Grey-300, #CECECE);
+    background: #FFF;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 12px 16px;
     box-sizing: border-box;
+    z-index: 10;
 `;
 
 const NavContainer = styled.div`
@@ -165,7 +162,6 @@ export default function Home() {
 
     return (
         <MobileWrapper>
-            <StatusBar />
 
             <Header>
                 <Title>대화할 상대를 고르세요!</Title>
