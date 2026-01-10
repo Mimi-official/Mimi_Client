@@ -1,10 +1,7 @@
 import styled from "styled-components";
-import 조원빈 from "../assets/images/조원빈.svg";
-import 한지연 from "../assets/images/한지연.svg";
-import 김민재 from "../assets/images/김민재.svg";
-import 강서현 from "../assets/images/강서현.svg";
-import 민정원 from "../assets/images/민정원.svg";
-import 윤서우 from "../assets/images/윤서우.svg";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MobileWrapper = styled.div`
     width: 100%;
@@ -17,8 +14,6 @@ const MobileWrapper = styled.div`
     position: relative;
     padding-bottom: 61px;
 `;
-
-
 
 const Header = styled.header`
     padding: 0px 20px;
@@ -52,7 +47,6 @@ const CardGrid = styled.div`
 `;
 
 const Card = styled.div`
-    position: relative;
     border-radius: 8px;
     overflow: hidden;
     height: 270px;
@@ -65,15 +59,14 @@ const Card = styled.div`
 `;
 
 const CardBackground = styled.div`
-    position: absolute;
+    height: 100%;
+    position: relative;
     inset: 0;
     background-color: #d9d9d9;
     background-image: ${props => props.$image ? `url(${props.$image})` : 'none'};
     background-size: cover;
     background-position: center;
 `;
-
-
 
 const BottomNav = styled.nav`
     position: fixed;
@@ -126,39 +119,61 @@ const NavIcon = styled.div`
     justify-content: center;
 `;
 
+const CardGradient = styled.div`
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(217, 217, 217, 0.00) 34.62%, #FFC2E2 100%);
+`;
+
+const CardInfo = styled.div`
+    position: absolute;
+    bottom: 0;
+    padding: 9px;
+`;
+
+const CardName = styled.div`
+    color: #000;
+    font-family: Pretendard;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+`;
+
+const CardHashTag = styled.div`
+    color: #000;
+    font-family: Pretendard;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+`;
+
 export default function Home() {
-    const characters = [
-        {
-            id: 1,
-            
-            image: 조원빈
-        },
-        {
-            id: 2,
-            
-            image: 한지연
-        },
-        {
-            id: 3,
-            
-            image: 김민재
-        },
-        {
-            id: 4,
-            
-            image: 강서현
-        },
-        {
-            id: 5,
-            
-            image: 민정원
-        },
-        {
-            id: 6,
-            
-            image: 윤서우
+    const navigate = useNavigate();
+    const [characters, setCharacters] = useState();
+
+    useEffect(() => {
+        async function getData() {
+            try {
+                const response = await axios.get('http://127.0.0.1:5000/api/characters/');
+                const data = response.data.data;
+                console.log("받아온 데이터:", data);
+                setCharacters(data);
+            }
+            catch (e) {
+                console.log('에러 발생', e);
+            }
         }
-    ];
+        getData();
+    }, []);
+
+    if (!characters) {
+        return;
+    }
 
     return (
         <MobileWrapper>
@@ -167,25 +182,26 @@ export default function Home() {
                 <Title>대화할 상대를 고르세요!</Title>
             </Header>
 
-            <CardGrid>
+            {characters && <CardGrid>
                 {characters.map(character => (
-                    <Card key={character.id}>
-                        <CardBackground $image={character.image} />
-                        {/* <CardGradient /> */}
-                        {/* <CardContent>
-                            <CardTitle>{character.name}</CardTitle>
-                            <CardDescription>{character.description}</CardDescription>
-                        </CardContent> */}
+                    <Card key={character.id} onClick={() => { navigate(`/character/${character.id}`) }}>
+                        <CardBackground $image={character.profile_img_url}>
+                            <CardGradient />
+                            <CardInfo>
+                                <CardName>{character.name}</CardName>
+                                <CardHashTag>{character.hashtags}</CardHashTag>
+                            </CardInfo>
+                        </CardBackground>
                     </Card>
                 ))}
-            </CardGrid>
+            </CardGrid>}
 
             <BottomNav>
                 <NavContainer>
                     <NavItem $active>
                         <NavIcon>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </NavIcon>
                         <span>홈</span>
@@ -193,7 +209,7 @@ export default function Home() {
                     <NavItem>
                         <NavIcon>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </NavIcon>
                         <span>대화</span>
@@ -201,8 +217,8 @@ export default function Home() {
                     <NavItem>
                         <NavIcon>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </NavIcon>
                         <span>마이페이지</span>
