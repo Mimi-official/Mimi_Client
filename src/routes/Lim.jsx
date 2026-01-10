@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Home from '../pages/Home';
+import Intro from '../pages/Intro';
 import Login from '../pages/Login';
 import Signup from '../pages/Signup';
 
 
 const LimRoutes = [
-    { path: "/", element: <Home /> },
+    { path: "/", element: <Intro /> },
     { path: "/login", element: <Login /> },
     { path: "/signup", element: <Signup /> }
 ];

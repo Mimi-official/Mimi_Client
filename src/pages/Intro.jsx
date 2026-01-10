@@ -19,7 +19,7 @@ const Logo = styled.img`
   height: auto;
 `;
 
-const Home = () => {
+const Intro = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,4 +38,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Intro;
