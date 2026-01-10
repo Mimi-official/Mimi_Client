@@ -50,6 +50,7 @@ const ContentBox = styled.div`
     flex-direction: column;
     flex: 1;
     padding: 15px 16px 0px 16px;
+    overflow-y: auto;
 `;
 
 const EndingType = styled.p`
