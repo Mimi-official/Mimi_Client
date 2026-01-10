@@ -156,7 +156,7 @@ const Login = () => {
     const data = { password: userPw, username: userId };
     async function login() {
       try {
-        const response = await axios.post('http://127.0.0.1:5000/api/auth/login',
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`,
           data,
           {
             withCredentials: true
@@ -171,7 +171,7 @@ const Login = () => {
     }
     login();
   }
-  
+
   return (
     <Container>
       <LoginText>로그인</LoginText>
