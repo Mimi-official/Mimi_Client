@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
 
 // 전체 컨테이너
 const Container = styled.div`
@@ -140,45 +142,85 @@ const ButtonText = styled.span`
 
 // Signup 컴포넌트 
 const Signup = () => {
+  const navigate = useNavigate();
+  const [userId, setUserId] = useState("");
+  const [userPw, setUserPw] = useState("");
+  const [userNick, setUserNick] = useState("");
+
+  const handleSignup = () => {
+    const data = { nickname: userNick, password: userPw, username: userId, };
+    async function login() {
+      try {
+        const response = await axios.post('http://127.0.0.1:5000/api/auth/register',
+          data,
+          {
+            withCredentials: true
+          }
+        );
+        console.log('요청 성공');
+        if (response.status === 201) {
+          alert('회원가입 성공!');
+          navigate('/login');
+        }
+      }
+      catch (error) {
+        if (error.response.status === 400) {
+          alert('이미 존재하는 아이디입니다.');
+        }
+        else {
+          console.log('에러 발생 : ', error);
+        }
+      }
+    }
+    login();
+  }
+
   return (
     <Container>
       <TitleText>회원가입</TitleText>
-      
+
       {/* 닉네임 영역 */}
       <NicknameLayout>
         <Label htmlFor="nickname">닉네임</Label>
-        <InputField 
-          id="nickname" 
-          type="text" 
+        <InputField
+          id="nickname"
+          type="text"
           placeholder="닉네임을 입력해주세요."
+          minLength={2}
+          onChange={(e) => setUserNick(e.target.value)}
         />
       </NicknameLayout>
 
       {/* 아이디 영역 */}
       <IdLayout>
         <Label htmlFor="userId">아이디</Label>
-        <InputField 
-          id="userId" 
-          type="text" 
+        <InputField
+          id="userId"
+          type="text"
           placeholder="아이디를 입력해주세요."
+          minLength={3}
+          maxLength={20}
+          onChange={(e) => setUserId(e.target.value)}
         />
       </IdLayout>
-      
+
       {/* 비밀번호 영역 */}
       <PasswordLayout>
         <Label htmlFor="userPw">비밀번호</Label>
-        <InputField 
-          id="userPw" 
-          type="password" 
+        <InputField
+          id="userPw"
+          type="password"
           placeholder="비밀번호를 입력해주세요."
+          minLength={6}
+          onChange={(e) => setUserPw(e.target.value)}
         />
       </PasswordLayout>
-      
+
       {/* 가입하기 버튼 */}
-      <SignupButton>
-        <ButtonText>가입하기</ButtonText> 
+      <SignupButton onClick={() => handleSignup()}>
+        <ButtonText>가입하기</ButtonText>
       </SignupButton>
-      
+
     </Container>
   );
 };
