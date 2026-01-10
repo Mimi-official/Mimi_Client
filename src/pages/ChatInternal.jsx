@@ -68,7 +68,7 @@ const ContentChat = styled.div`
 `
 const BottomBox = styled.div`
     display: flex;
-    padding: 23px 20px 23px 24px;
+    padding: 22px 20px 22px 24px;
     border-radius: 20px 20px 0 0;
     border: 1px solid var(--Grey-300, #CECECE);
     background: #FFF;
