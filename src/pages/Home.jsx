@@ -15,7 +15,7 @@ const MobileWrapper = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
-    padding-bottom: 109px;
+    padding-bottom: 61px;
 `;
 
 
@@ -78,11 +78,11 @@ const CardBackground = styled.div`
 const BottomNav = styled.nav`
     position: fixed;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 390px;
-    width: 100%;
-    height: 109px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    max-width: 358px;
+    height: 61px;
     border-radius: 20px 20px 0 0;
     border: 1px solid var(--Grey-300, #CECECE);
     background: #FFF;
@@ -97,7 +97,7 @@ const BottomNav = styled.nav`
 const NavContainer = styled.div`
     display: flex;
     width: 100%;
-    height: 56px;
+    
     align-items: center;
     justify-content: center;
 `;
