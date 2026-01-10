@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
 
 // 전체 컨테이너
 const Container = styled.div`
   width: 390px;
-  height: 844px;
+  height: 100vh;
   background-color: white;
   margin: 0 auto;
   position: relative; 
@@ -145,37 +148,62 @@ const SignupText = styled.a`
 
 // Login 컴포넌트
 const Login = () => {
+  const navigate = useNavigate();
+  const [userId, setUserId] = useState("");
+  const [userPw, setUserPw] = useState("");
+
+  const handleLogin = () => {
+    const data = { password: userPw, username: userId };
+    async function login() {
+      try {
+        const response = await axios.post('http://127.0.0.1:5000/api/auth/login',
+          data,
+          {
+            withCredentials: true
+          }
+        );
+        console.log('요청 성공');
+        console.log(response);
+      }
+      catch (e) {
+        console.log('에러 발생 : ', e);
+      }
+    }
+    login();
+  }
   return (
     <Container>
       <LoginText>로그인</LoginText>
-      
+
       {/* 아이디 영역 */}
       <LoginLayout>
         <Label htmlFor="userId">아이디</Label>
-        <InputField 
-          id="userId" 
-          type="text" 
+        <InputField
+          id="userId"
+          type="text"
           placeholder="아이디를 입력해주세요."
+          onChange={(e) => setUserId(e.target.value)}
         />
       </LoginLayout>
-      
+
       {/* 비밀번호 영역 */}
       <PasswordLayout>
         <Label htmlFor="userPw">비밀번호</Label>
-        <InputField 
-          id="userPw" 
-          type="password" 
+        <InputField
+          id="userPw"
+          type="password"
           placeholder="비밀번호를 입력해주세요."
+          onChange={(e) => setUserPw(e.target.value)}
         />
       </PasswordLayout>
 
       {/* 로그인 버튼 (내부에 ButtonText 적용) */}
-      <LoginButton>
+      <LoginButton onClick={() => handleLogin()}>
         <ButtonText>로그인</ButtonText>
       </LoginButton>
 
       {/* 회원가입 텍스트 */}
-      <SignupText href="#">회원가입</SignupText>
+      <SignupText href="#" onClick={() => navigate('/signup')}>회원가입</SignupText>
 
     </Container>
   );

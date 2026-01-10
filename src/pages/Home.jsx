@@ -6,10 +6,8 @@ import MiniLogo from '../assets/images/Mimi_Logo.png';
 // 스타일
 const Container = styled.div`
   width: 390px;
-  height: 844px;
-
+  height: 100vh;
   background-color: #FF76BD;
-
   margin: 0 auto;
   display: flex;
   justify-content: center; /* 가로 중앙 정렬 */
