@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
@@ -8,10 +8,11 @@ import BotBubble from "../components/BotBubble";
 import UserBubble from "../components/UserBubble";
 import SystemChat from "../components/SystemChat";
 
+// ... (스타일 컴포넌트들은 기존과 동일하게 유지 - 생략 없이 그대로 사용하시면 됩니다)
 const Container = styled.div`
     margin: 0 auto;
     width: 393px;
-    height: 852px;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     background: #F1F1F1;
@@ -28,7 +29,7 @@ const Header = styled.header`
 `;
 
 const BackIconBox = styled.div`
-    cursor: pointer; /* 클릭 가능하다는 표시 */
+    cursor: pointer;
 `;
 
 const CharacterName = styled.p`
@@ -47,14 +48,8 @@ const Main = styled.div`
     flex: 1;
     overflow-y: scroll;
     position: relative;
-    &::-webkit-scrollbar {
-        width: 5px; /* 스크롤바 너비 */
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent; /* 트랙은 항상 투명 */
-    }
-
+    &::-webkit-scrollbar { width: 5px; }
+    &::-webkit-scrollbar-track { background: transparent; }
     &::-webkit-scrollbar-thumb {
         border-radius: 10px;
         background-color: ${props => props.$isScrolling ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0)'};
@@ -83,16 +78,12 @@ const InputText = styled.input`
     border: none;
     border-radius: 10px;
     padding: 0px 15px;
-    &:focus {
-        outline: none;
-    }
+    &:focus { outline: none; }
 `;
 
 const SendBtnWapper = styled.div`
-    svg {
-        width: 39px;
-        height: 39px;
-    }
+    cursor: pointer;
+    svg { width: 39px; height: 39px; }
 `;
 
 const InputChat = styled.div`
@@ -114,16 +105,17 @@ const ChoiceBtn = styled.div`
     background: #FF76BD;
     box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.06);
     padding: 8px 12px;
-    &:hover {
-        background: #D3639D;
-    }
+    cursor: pointer;
+    &:hover { background: #D3639D; }
 
-    p {color: #FFF;
+    p {
+        color: #FFF;
         font-family: "Pretendard Variable";
         font-size: 13px;
         font-style: normal;
         font-weight: 600;
         line-height: normal;
+        margin: 0;
     }
 `;
 
@@ -132,143 +124,171 @@ export default function ChatInternal() {
     const params = useParams();
     const name = params.name;
     const [messages, setMessages] = useState([]);
+    const [currentChoices, setCurrentChoices] = useState([]);
+    const [inputText, setInputText] = useState("");
+    const [eventStart, setEventStart] = useState(false);
+    const [waitingReply, setWaitingReply] = useState(false);
+    const scrollRef = useRef();
+    const [isScrolling, setIsScrolling] = useState(false);
+    const scrollTimeoutRef = useRef(null);
+    const inputRef = useRef(null);
 
-    const [eventList, setEventList] = useState([
-        {
-            id: 1,
-            sender: 'bot',
-            name: '조원빈',
-            message: "원하는 답변이 나오자 기대감에 가득찬 눈으로 쳐다보며 말했다.<br><br><strong>가장 좋아하는 말은 어떤 스타일이에요?</strong>",
-            choice: ['햇살을 받으면 구릿빛으로 빛나는 진한 갈색<br>말이 제일 섹시하죠', '눈에 확 띄는 백마나 금발 말이 제일 예쁘지<br> 않나요?'],
-            response: [
-                `<strong>오... 당신, 진짜를 아시는군요? 금발은 화려해서 좋지만, 저 깊이 있는 갈색 털이야말로 진정한 '실력파'의 오라가 느껴지거든요. 마치 제 최애인 타키온처럼요!</strong>`,
-                `(기대했던 빛이 눈동자에서 순식간에 사라지며)<strong>아...역시 외형 위주로보시는구나. 뭐, 백마가 화려한 게 좋긴 하죠.동화 속 왕자님 같기도 하고. 하지만... 그런 겉모습에만 치중하다 보면 그 너머에 있는 말의 진정한 '혈통'과 '근성'은 절대 볼 수 없거든요. 조금 아쉽네요, 트레이너님과는 보는 눈이 좀 다를지도 모르겠어요.</strong>`,
-            ],
-            addAffection: [
-                20, -20
-            ]
-        },
-        {
-            id: 2,
-            type: 'bot',
-            sender: '조원빈',
-            message: "<strong>평소에 시간 날 때 자주 하는 게임 있어요?</strong>",
-            choice: ['요즘 우마무스메에 푹 빠져서 트레이너 생활 중이에요.', '그냥 평범한 퍼즐 게임이나 해요.'],
-            response: [
-                `<strong>트레이너님이었어?! 어쩐지 기운이 남다르다 했어요! 제 육성 덱 봐주실래요? 이번 챔피언즈 미팅 너무 힘들거든요~</strong>`,
-                `(어색하게 입꼬리만 올려 미소 지으며)<strong>"아... 퍼즐... 네, 머리 쓰는 건 좋죠. 블록 맞추는 거... 재밌겠네요. 전 또 혹시나 해서 기대했는데. 역시 저처럼 말들의 숨소리에 심장이 뛰고, 서포트 카드 한 장에 인생을 거는 '진짜' 트레이너를 만나는 건 역시 역배(역배당)를 맞추는 것만큼이나 어려운 일인가 봐요. 갑자기 좀 피곤해지네요. 전 이만 가볼게요.</strong>`,
-            ],
-            addAffection: [
-                20, -20
-            ]
-        },
-        {
-            id: 3,
-            type: 'bot',
-            sender: '조원빈',
-            message: "<strong>평소에 시간 날 때 자주 하는 게임 있어요?</strong>",
-            choice: ['요즘 우마무스메에 푹 빠져서 트레이너 생활 중이에요.', '그냥 평범한 퍼즐 게임이나 해요.'],
-            response: [
-                `<strong>트레이너님이었어?! 어쩐지 기운이 남다르다 했어요! 제 육성 덱 봐주실래요? 이번 챔피언즈 미팅 너무 힘들거든요~</strong>`,
-                `(어색하게 입꼬리만 올려 미소 지으며)<strong>"아... 퍼즐... 네, 머리 쓰는 건 좋죠. 블록 맞추는 거... 재밌겠네요. 전 또 혹시나 해서 기대했는데. 역시 저처럼 말들의 숨소리에 심장이 뛰고, 서포트 카드 한 장에 인생을 거는 '진짜' 트레이너를 만나는 건 역시 역배(역배당)를 맞추는 것만큼이나 어려운 일인가 봐요. 갑자기 좀 피곤해지네요. 전 이만 가볼게요.</strong>`,
-            ],
-            addAffection: [
-                20, -20
-            ]
-        }
-
-    ]);
-    const [evnetCount, setEventCount] = useState(0); //현재 이벤트 진행 상황
-    const [affection, setAffection] = useState(0); //호감도
-    const [inputText, setInputText] = useState(""); //현재 입력된 채팅
-    const [eventStart, setEventStart] = useState(false); //이벤트 시작 유무
-    const [waitingReply, setWaitingReply] = useState(false); //답장을 기다리는지 상태 확인
-    const scrollRef = useRef(); //스크롤 훅
-    const [isScrolling, setIsScrolling] = useState(false); //스크롤 유무
-    const scrollTimeoutRef = useRef(null); //스크롤 타임아웃 훅
-    const inputRef = useRef(null); //채팅 입력폼
-
-    useState(() => {
+    // 1. 초기 메시지 로드
+    useEffect(() => {
         async function getMessages() {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/chat/${name}`, {
                     withCredentials: true
                 });
                 const data = response.data.data;
-                console.log("받아온 데이터:", data);
-                setMessages(data.chat_history);
+                // 백엔드 데이터 구조에 맞춰서 설정 (chat_history는 배열)
+                setMessages(data.chat_history || []);
+
+                // 마지막 상태에 따라 호감도 등 초기화가 필요하다면 여기서 수행
+                if (data.chat_history.length > 0) {
+                    // 필요 시 마지막 메시지의 호감도 등을 세팅 가능
+                }
             }
             catch (e) {
-                console.log('에러 발생', e);
+                console.log('초기 메시지 로드 에러', e);
             }
         }
         getMessages();
-    }, [])
+    }, [name]);
 
-    //메시지가 추가될 시 자동스크롤
+    // 스크롤 자동 이동
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    }, [messages]);
+    }, [messages, currentChoices]); // 선택지가 뜰 때도 스크롤 조정
 
-    //메시지 전송
-    const handleSend = () => {
+    // 2. 메시지 전송 (채팅)
+    const handleSend = async () => {
         if (!inputText.trim() || waitingReply) return;
-        setWaitingReply(true);
-        setMessages(prev => [
-            ...prev,
-            { id: messages.length + 1, sender: 'user', message: inputText }
-        ]);
 
-
-        async function getMessages() {
-            const body = { message: inputText };
-            try {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat/${name}`, body, {
-                    withCredentials: true
-                });
-                const data = response.data.data;
-                console.log("받아온 데이터:", data);
-                if (affection < 60) {
-                    setMessages(prev => [
-                        ...prev,
-                        { id: messages.length + 1, sender: 'ai', 'char_name': name, message: `${data.response}` }
-                    ])
-                    setWaitingReply(false);
-                    setAffection(data.progress.affinity);
-                }
-            }
-            catch (e) {
-                console.log('에러 발생', e);
-            }
-        }
-        getMessages();
+        // 사용자 메시지 즉시 화면 표시
+        const userMsg = { id: Date.now(), sender: 'user', message: inputText };
+        setMessages(prev => [...prev, userMsg]);
         setInputText("");
-    };
+        setWaitingReply(true);
 
-    //봇이 답장하면 기다림 상태 해제
-    useEffect(() => {
-        if (!waitingReply && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [waitingReply]);
+        try {
+            const body = { message: inputText };
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat/${name}`, body, {
+                withCredentials: true
+            });
 
-    //호감도 60 이상 시, 이벤트 발동
-    useEffect(() => {
-        console.log(`현재 호감도 ${affection}`);
-        if (affection >= 60 && !eventStart) {
-            setEventStart(true);
+            const data = response.data.data; // 백엔드: { type, response, trigger_event, affinity, profile_img_url }
+            console.log(data);
+            // AI 응답 화면 표시
             setMessages(prev => [
                 ...prev,
-                { id: messages.length + 1, sender: 'system', message: '- 이벤트 발동 -' },
-                { id: messages.length + 2, sender: 'ai', 'char_name': name, message: `${eventList[0].text}` }
-            ])
+                {
+                    id: Date.now() + 1,
+                    sender: 'ai',
+                    char_name: name,
+                    message: data.response,
+                    profile_img_url: data.profile_img_url // [추가] 백엔드에서 받은 프사
+                }
+            ]);
 
+            setWaitingReply(false);
+
+            // [핵심] 백엔드가 이벤트를 트리거하라고 하면 이벤트 내용 조회 시작
+            if (data.trigger_event) {
+                console.log("이벤트 발생 조건 충족!");
+                setMessages(prev => [
+                    ...prev,
+                    { id: Date.now(), sender: 'system', message: '- 이벤트 발생 -' },
+                ]);
+                fetchCurrentEvent(); // 이벤트 정보 가져오기 호출
+            }
+
+        } catch (e) {
+            console.log('메시지 전송 에러', e);
+            setWaitingReply(false);
         }
-    }, [affection])
+    };
 
-    //스크롤 관련 함수
+    // 3. 이벤트 정보 가져오기 (백엔드의 get_current_event에 대응)
+    const fetchCurrentEvent = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/chat/${name}/event`, {
+                withCredentials: true
+            });
+            const data = response.data.data; // { is_ended, event: {...}, choices: [] }
+            console.log(data);
+
+            if (data.is_ended) {
+                navigate(`/ending/${name}`);
+                return;
+            }
+
+            // 시스템 메시지 & 이벤트 지문(BotBubble 형식) 추가
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: Date.now(),
+                    sender: 'ai',
+                    char_name: name,
+                    message: `<strong>${data.event.event_text}</strong>` || "엇... 잠시 문제가 생겼어요...", // [주의] DB 컬럼명에 따라 수정 필요 (예: script, description)
+                    profile_img_url: data.profile_img_url // 만약 이벤트용 이미지가 따로 있다면
+                }
+            ]);
+
+            // 선택지 상태 업데이트 -> 하단 UI가 변경됨
+            setCurrentChoices(data.choices || []);
+            setEventStart(true);
+
+        } catch (e) {
+            console.log('이벤트 로드 에러', e);
+        }
+    };
+
+    // 4. 선택지 클릭 처리 (백엔드의 handle_choice에 대응)
+    const handleChoice = async (idx) => {
+        // 선택한 내용 화면에 표시
+        const choiceText = currentChoices[idx].text;
+        setMessages(prev => [
+            ...prev,
+            { id: Date.now(), sender: 'user', message: choiceText }
+        ]);
+
+        // 선택지 UI 숨기기 (일단 숨기고 결과 기다림)
+        setEventStart(false);
+        setCurrentChoices([]);
+
+        try {
+            // 백엔드 handle_choice는 choice_index 1, 2, 3을 기대하므로 idx + 1
+            const body = { choice_index: idx + 1 };
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat/${name}`, body, {
+                withCredentials: true
+            });
+
+            const data = response.data.data; // { type: 'choice', affinity: ..., message: ... }
+            setMessages(prev => [
+                ...prev,
+                { id: Date.now(), sender: 'ai', char_name: name, message: data.response, profile_img_url: data.profile_img_url }
+            ]);
+
+            setTimeout(() => {
+                fetchCurrentEvent();
+            }, 3000)
+
+        } catch (e) {
+            console.log('선택지 전송 에러', e);
+        }
+    }
+
+    // 봇 답장 대기 해제 시 포커스
+    useEffect(() => {
+        if (!waitingReply && !eventStart && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [waitingReply, eventStart]);
+
+    // 스크롤 UI 핸들러
     const handleScroll = () => {
         if (!isScrolling) setIsScrolling(true);
         if (scrollTimeoutRef.current) {
@@ -276,7 +296,7 @@ export default function ChatInternal() {
         }
         scrollTimeoutRef.current = setTimeout(() => {
             setIsScrolling(false);
-        }, 3000); // 3초 후 사라짐
+        }, 3000);
     };
 
     useEffect(() => {
@@ -285,7 +305,6 @@ export default function ChatInternal() {
         };
     }, []);
 
-    //엔터키 입력 시 전송 & 입력 중이면 이벤트 무시
     const handleKeyDown = (e) => {
         if (e.nativeEvent.isComposing) return;
         if (e.key === 'Enter') {
@@ -293,30 +312,9 @@ export default function ChatInternal() {
         }
     };
 
-    //이벤트 선택 버튼 클릭 핸들러
-    const eventChoice = (idx) => {
-        setMessages(prev => [
-            ...prev,
-            { id: messages.length + 1, sender: 'user', message: `${eventList[evnetCount].choice[idx]}` }
-        ])
-        console.log(idx);
-        setAffection(prev => prev + eventList[evnetCount].addAffection[idx]);
-        if (evnetCount + 1 < eventList.length) {
-            setEventCount(prev => prev + 1);
-        }
-        else {
-            navigate('/ending');
-        }
-    }
-
-    useEffect(() => {
-        if (eventStart) {
-            setMessages(prev => [
-                ...prev,
-                { id: messages.length + 1, sender: 'ai', 'char_name': name, message: `${eventList[evnetCount].text}` }
-            ])
-        }
-    }, [evnetCount])
+    // useEffect(() => {
+    //     fetchCurrentEvent();
+    // }, [])
 
     return (
         <Container>
@@ -331,13 +329,14 @@ export default function ChatInternal() {
             <Main $isScrolling={isScrolling} onScroll={handleScroll} ref={scrollRef}>
                 <ContentChat>
                     {messages.map((data, idx) => {
-                        if (data.sender == 'ai') {
+                        if (data.sender === 'ai') {
+                            // [수정] 백엔드에서 온 profile_img_url 전달
                             return <BotBubble item={data} key={idx} />
                         }
-                        else if (data.sender == 'user') {
+                        else if (data.sender === 'user') {
                             return <UserBubble item={data} key={idx} />
                         }
-                        else if (data.sender == 'system') {
+                        else if (data.sender === 'system') {
                             return <SystemChat item={data} key={idx} />
                         }
                     })}
@@ -357,21 +356,20 @@ export default function ChatInternal() {
                         <SendBtnWapper onClick={() => handleSend()}>
                             <ChatSendIcon />
                         </SendBtnWapper>
-
                     </InputChat>
 
-                    :
-                    <EventChoice>
-                        {(eventList[evnetCount].choice).map((item, idx) => {
-                            return (
-                                <ChoiceBtn onClick={() => eventChoice(idx)} key={idx}>
-                                    <p dangerouslySetInnerHTML={{ __html: item }} />
-                                </ChoiceBtn>
-                            )
+                    : <EventChoice>
+                        {/* 서버에서 받아온 선택지 렌더링 */}
+                        {currentChoices && currentChoices.map((item, idx) => {
+                            if (item) {
+                                return (
+                                    <ChoiceBtn onClick={() => handleChoice(idx)} key={idx}>
+                                        <p dangerouslySetInnerHTML={{ __html: item?.text }} />
+                                    </ChoiceBtn>
+                                )
+                            }
                         })}
                     </EventChoice>
-
-
                 }
             </BottomBox>
         </Container>

@@ -1,10 +1,13 @@
 import styled from "styled-components";
+import { useNavigate, useParams } from 'react-router-dom';
 import wonbin_ending1 from "../assets/images/wonbin/ending1.png";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Container = styled.div`
     margin: 0 auto;
     width: 393px;
-    height: 852px;
+    height: 100vh;
     display: flex;
     flex-direction: column;
 `;
@@ -69,7 +72,7 @@ const Line = styled.div`
     margin: 10px 0px;
 `
 
-const EndingContent = styled.p`
+const EndingContent = styled.div`
     color: #000;
     font-family: Pretendard;
     font-size: 14px;
@@ -107,6 +110,7 @@ const ChoiceBtn = styled.div`
     font-style: normal;
     font-weight: 700;
     line-height: 140%;
+    cursor: pointer;
 
     &:hover {
         background: ${props => props.$background_hover};
@@ -114,28 +118,47 @@ const ChoiceBtn = styled.div`
 `;
 
 export default function Ending() {
-    const data = {
-        img_url: wonbin_ending1,
-        title: '트리플 크라운 러브',
-        type: '성공',
-        content: `원빈은 당신을 '운명의 트레이너'로 임명합니다.<br> 매주 경마장에서 만나고 평일엔 카페에서 육성 전략을 짭니다.<br><br>
-<strong>"다음 경기는 우리 집에서 같이 볼까요, 트레이너님?"</strong>`
+    const navigate = useNavigate();
+    const params = useParams();
+    const name = params.name;
+    const [data, setDate] = useState();
+
+    useEffect(() => {
+        async function getEnding() {
+            const body = { character_name: name }
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/characters/ending`, body, {
+                    withCredentials: true,
+                })
+                const info = response.data.data;
+                console.log(info);
+                setDate(info)
+            }
+            catch(error) {
+                console.log(error);
+            }
+        }
+        getEnding()
+    }, [])
+
+    if (!data) {
+        return;
     }
 
     return (
         <Container>
             <Picture>
-                <img src={data.img_url}/>
-                <Gradient/>
+                <img src={data.image_url} />
+                <Gradient />
                 <EndingName>
                     {data.title}
                 </EndingName>
             </Picture>
             <ContentBox>
                 <EndingType>
-                    {data.type} 엔딩 [{data.title}]
+                    {data.ending_type} 엔딩 [{data.title}]
                 </EndingType>
-                <Line/>
+                <Line />
                 <EndingContent>
                     <p dangerouslySetInnerHTML={{ __html: data.content }}></p>
                 </EndingContent>

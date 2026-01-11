@@ -8,7 +8,7 @@ import axios from "axios";
 const Container = styled.div`
     margin: 0 auto;
     width: 393px;
-    height: 852px;
+    height: 100vh;
     display: flex;
     flex-direction: column;
 `;
@@ -50,11 +50,7 @@ export default function Chat() {
         }
         fecthData();
     }, [])
-    // const data = [
-    //     { id: 1, img: null, name: '조원빈', lastchat: '그래서 넌 무슨 말 좋아해??', },
-    //     { id: 2, img: null, name: '강서현', lastchat: '나랑 같이 "이 멋진 세계에 축복을!" 극장판 보러가지 않을래??'},
-    //     { id: 3, img: null, name: '민정원', lastchat: '아아아악!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'}
-    // ];
+    
     return (
         <Container>
             <Title>
