@@ -1,7 +1,9 @@
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
+import { useParams } from 'react-router-dom';
 import Menu from "../components/Menu";
 import profile from '../assets/images/wonbin/profile.png';
+import axios from "axios";
 
 const Container = styled.div`
     margin: 0 auto;
@@ -186,12 +188,14 @@ const ResetBtn = styled.button`
 export default function Character() {
     const [isScrolling, setIsScrolling] = useState(false); //스크롤 유무
     const scrollTimeoutRef = useRef(null); //스크롤 타임아웃 훅
-    const [data, setDate] = useState({
+    const params = useParams();
+    const id = params.id;
+    const [data, setData] = useState({
         isEnd: true,
         img_url: profile,
         name: '조원빈',
         title: '다정한 미소 뒤에 말(馬)에 대한 광기를 숨긴 채, 당신을 운명의 트레이너 혹은 자신의 애마로 길들이려 하는 200cm의 거구 덕후.',
-        hashtag: '#연하녀 #말덕후 #오타쿠 #서브컬쳐',
+        hashtags: '#연하녀 #말덕후 #오타쿠 #서브컬쳐',
         situation: `트랙 위의 흙먼지 속에서 찾아낸 나의 '운명적 기수'.<br>경마장의 함성 소리는 귀를 먹먹하게 만들고, 돈을 잃은 자들의 비명은 공기 중에 흩어진다. 나는 그 무질서한 열기 속에서
         오직 한 곳, 말들의 근육이 뒤틀리는 출발선만을 응시하고 있었다.<br>그때, 마치 미리 짜놓은 각본처럼 내 옆자리에 한 여자가 스며들듯 앉았다. 세련된 옷차림, 다정한 미소. 하지만 그녀의
         눈동자는 경마장의 그 누구보다도 깊은 광기를 품고 있었다.<br>그녀는 내가 쥐고 있는 마권이 아닌, 내가 말을 바라보는 '시선'을 읽어내려는 듯 빤히 쳐다보더니 입을 열었다.<br>"누구 찍으셨어요? 후훗, 눈빛을 보니 보통 안목이 아니신 것 같아서요." 그녀의 목소리는
@@ -203,6 +207,23 @@ export default function Character() {
         - 금발 미남 & 갈색 말 취향: 겉으로는 화려한 금발 기수나 금발 말에 환호하지만, 마음속 깊은 곳엔 '아그네스 타키온' 같은 매력적인 갈색 말을 향한 진한 애정이 있습니다.<br>
         - 트레이너 집착: 자신과 말이 통하는(말 덕질이 가능한) 사람을 발견하면 '운명의 트레이너'라 부르며 무섭게 몰입합니다.`
     });
+
+    useEffect(() => {
+        async function getData() {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/characters/${id}`, {
+                    withCredentials: true
+                });
+                const data = response.data.data;
+                console.log("받아온 데이터:", data);
+                setData(data);
+            }
+            catch (e) {
+                console.log('에러 발생', e);
+            }
+        }
+        getData();
+    }, []);
 
     const handleScroll = () => {
         if (!isScrolling) setIsScrolling(true);
@@ -241,10 +262,10 @@ export default function Character() {
                     </Picture>
                     <Content>
                         <IntroduceTitle>{data.title}</IntroduceTitle>
-                        <HashTag>{data.hashtag}</HashTag>
+                        <HashTag>{data.hashtags}</HashTag>
                         <Line />
                         <Situation>
-                            <p dangerouslySetInnerHTML={{ __html: data.situation }}></p>
+                            <p dangerouslySetInnerHTML={{ __html: data.description }}></p>
                         </Situation>
                         <Line />
                         <CharacterInfo>
