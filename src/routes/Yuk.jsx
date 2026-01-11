@@ -1,7 +1,8 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom';
+import Mypage from '../pages/Mypage';
 
-const WeeRoutes = [
-
+const YukRoutes = [
+    { path: '/mypage', element: <Mypage /> }
 ];
 
-export default WeeRoutes
+export default YukRoutes
