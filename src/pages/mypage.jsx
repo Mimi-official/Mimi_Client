@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import HomeIcon from "../assets/images/home_icon.svg?react";
 import ChatIcon from "../assets/images/chat_icon.svg?react";
 import MypageIcon from "../assets/images/mypage_icon.svg?react";
@@ -91,7 +91,7 @@ export function Menu(props) {
 
 const ScreenContainer = styled.div`
   width: 393px;
-  height: 845px;
+  height: 100vh;
   background-color: #FFFFFF;
   margin: 0 auto;
   position: relative; /* 자식 요소 absolute 배치를 위해 */
@@ -104,14 +104,11 @@ const ScreenContainer = styled.div`
 `;
 
 const Header = styled.header`
-  width: 350px;
-  height: 100px;
-  padding: 10px 20px;
+  padding: 20px;
   display: flex;
   justify-content: center;
   flex-direction: column; 
   align-items: center;
-  gap: 10px;
   background-color: ${HEADER_BG};
 `;
 
@@ -122,7 +119,6 @@ const PageTitle = styled.h1`
   margin: 0;
   text-align: center;
   width: 100%;
-
 `;
 
 const ContentArea = styled.div`
@@ -196,47 +192,37 @@ const MenuItem = styled.div`
 `;
 
 const IconPencil = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-  </svg>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
 );
 
-const BottomWrapper = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 100;
-`;
-
 export default function MyPage() {
-  return (
-    <ScreenContainer>
-      
-      <Header>
-        <PageTitle>마이페이지</PageTitle>
-      </Header>
+    return (
+        <ScreenContainer>
 
-      <ContentArea>
-        <ProfileCard>
-          <AvatarCircle />
-          <NameWrapper>
-            한지연
-            <EditIcon><IconPencil /></EditIcon>
-          </NameWrapper>
-        </ProfileCard>
+            <Header>
+                <PageTitle>마이페이지</PageTitle>
+            </Header>
 
-        <SectionTitle>내 계정</SectionTitle>
-        <MenuBox>
-          <MenuItem>로그아웃</MenuItem>
-          <MenuItem>회원탈퇴</MenuItem>
-        </MenuBox>
-      </ContentArea>
+            <ContentArea>
+                <ProfileCard>
+                    <AvatarCircle />
+                    <NameWrapper>
+                        한지연
+                        <EditIcon><IconPencil /></EditIcon>
+                    </NameWrapper>
+                </ProfileCard>
 
-      <BottomWrapper>
-        <Menu menu={3} />
-      </BottomWrapper>
+                <SectionTitle>내 계정</SectionTitle>
+                <MenuBox>
+                    <MenuItem>로그아웃</MenuItem>
+                    <MenuItem>회원탈퇴</MenuItem>
+                </MenuBox>
+            </ContentArea>
 
-    </ScreenContainer>
-  );
+            <Menu menu={3} />
+
+        </ScreenContainer>
+    );
 }
