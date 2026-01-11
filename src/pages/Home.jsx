@@ -5,25 +5,20 @@ import { useNavigate } from "react-router-dom";
 
 const MobileWrapper = styled.div`
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     max-width: 390px;
     margin: 0 auto;
     background-color: #fdfdfd;
     display: flex;
     flex-direction: column;
-    position: relative;
-    padding-bottom: 61px;
 `;
 
 const Header = styled.header`
-    padding: 0px 20px;
     text-align: center;
     background-color: #fdfdfd;
     box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.06);
     position: relative;
-    z-index: 1;
-    width: 390px;
-    height: 68px;                                                                                      
+    padding: 20px;                                                                                
     display: flex;                                                                                     
     align-items: center;                                                                               
     justify-content: center; 
@@ -37,13 +32,17 @@ const Title = styled.h1`
     margin: 0;
 `;
 
-const CardGrid = styled.div`
+const Main = styled.div`
+    height: 100%;
     flex: 1;
+    overflow: auto;
+`;
+
+const CardGrid = styled.div`
     padding: 16px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    overflow-y: auto;
 `;
 
 const Card = styled.div`
@@ -68,13 +67,7 @@ const CardBackground = styled.div`
 `;
 
 const BottomNav = styled.nav`
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    max-width: 358px;
-    height: 61px;
+    width: 100%;
     border-radius: 20px 20px 0 0;
     border: 1px solid var(--Grey-300, #CECECE);
     background: #FFF;
@@ -83,13 +76,11 @@ const BottomNav = styled.nav`
     align-items: center;
     padding: 12px 16px;
     box-sizing: border-box;
-    z-index: 10;
 `;
 
 const NavContainer = styled.div`
     display: flex;
     width: 100%;
-    
     align-items: center;
     justify-content: center;
 `;
@@ -181,19 +172,21 @@ export default function Home() {
                 <Title>대화할 상대를 고르세요!</Title>
             </Header>
 
-            {characters && <CardGrid>
-                {characters.map(character => (
-                    <Card key={character.id} onClick={() => { navigate(`/character/${character.id}`) }}>
-                        <CardBackground $image={character.profile_img_url}>
-                            <CardGradient />
-                            <CardInfo>
-                                <CardName>{character.name}</CardName>
-                                <CardHashTag>{character.hashtags}</CardHashTag>
-                            </CardInfo>
-                        </CardBackground>
-                    </Card>
-                ))}
-            </CardGrid>}
+            <Main>
+                {characters && <CardGrid>
+                    {characters.map(character => (
+                        <Card key={character.id} onClick={() => { navigate(`/character/${character.id}`) }}>
+                            <CardBackground $image={character.profile_img_url}>
+                                <CardGradient />
+                                <CardInfo>
+                                    <CardName>{character.name}</CardName>
+                                    <CardHashTag>{character.hashtags}</CardHashTag>
+                                </CardInfo>
+                            </CardBackground>
+                        </Card>
+                    ))}
+                </CardGrid>}
+            </Main>
 
             <BottomNav>
                 <NavContainer>
@@ -205,7 +198,7 @@ export default function Home() {
                         </NavIcon>
                         <span>홈</span>
                     </NavItem>
-                    <NavItem>
+                    <NavItem onClick={() => {navigate('/chat')}}>
                         <NavIcon>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -213,7 +206,7 @@ export default function Home() {
                         </NavIcon>
                         <span>대화</span>
                     </NavItem>
-                    <NavItem>
+                    <NavItem onClick={() => {navigate('/mypage')}}>
                         <NavIcon>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
