@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, use } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import styled from "styled-components";
 import BackIcon from '../assets/images/back_icon.svg?react';
 import ChatSendIcon from "../assets/images/chat_send.svg?react";
@@ -128,21 +129,16 @@ const ChoiceBtn = styled.div`
 
 export default function ChatInternal() {
     const navigate = useNavigate();
-    const [messages, setMessages] = useState([
-        {
-            id: 1,
-            type: 'bot',
-            name: '조원빈',
-            text: "쨍한 햇살 아래, 경주마들의 우렁찬 발굽 소리가 트랙을 가득 채우는 경마장에서  수많은 인파 속에서도 당신은 오직 한 마리 말에게서 시선을 떼지 못하고 간절한 눈으로  응원하고 있었다.<br><br>그때, 왁자지껄한 소음 사이를 뚫고 희미한 말굽 소리가 당신의 심장을  울린다. 바로 옆자리, 누군가 익숙한 듯 자연스럽게 착석하는 인기척이 느껴진다.<br><br>흘끗 고개를  돌리니, 다정한 눈빛으로 당신이 응원하던 말을 함께 지켜보던 그녀가 살짝 미소 지으며 말을  건낸다.<br><br><strong>누구 찍으셨어요? 후훗, 눈빛을 보니 보통 안목이 아니신 것 같아서요.</strong>",
-        },
-    ]);
+    const params = useParams();
+    const name = params.name;
+    const [messages, setMessages] = useState([]);
 
     const [eventList, setEventList] = useState([
         {
             id: 1,
-            type: 'bot',
+            sender: 'bot',
             name: '조원빈',
-            text: "원하는 답변이 나오자 기대감에 가득찬 눈으로 쳐다보며 말했다.<br><br><strong>가장 좋아하는 말은 어떤 스타일이에요?</strong>",
+            message: "원하는 답변이 나오자 기대감에 가득찬 눈으로 쳐다보며 말했다.<br><br><strong>가장 좋아하는 말은 어떤 스타일이에요?</strong>",
             choice: ['햇살을 받으면 구릿빛으로 빛나는 진한 갈색<br>말이 제일 섹시하죠', '눈에 확 띄는 백마나 금발 말이 제일 예쁘지<br> 않나요?'],
             response: [
                 `<strong>오... 당신, 진짜를 아시는군요? 금발은 화려해서 좋지만, 저 깊이 있는 갈색 털이야말로 진정한 '실력파'의 오라가 느껴지거든요. 마치 제 최애인 타키온처럼요!</strong>`,
@@ -155,8 +151,8 @@ export default function ChatInternal() {
         {
             id: 2,
             type: 'bot',
-            name: '조원빈',
-            text: "<strong>평소에 시간 날 때 자주 하는 게임 있어요?</strong>",
+            sender: '조원빈',
+            message: "<strong>평소에 시간 날 때 자주 하는 게임 있어요?</strong>",
             choice: ['요즘 우마무스메에 푹 빠져서 트레이너 생활 중이에요.', '그냥 평범한 퍼즐 게임이나 해요.'],
             response: [
                 `<strong>트레이너님이었어?! 어쩐지 기운이 남다르다 했어요! 제 육성 덱 봐주실래요? 이번 챔피언즈 미팅 너무 힘들거든요~</strong>`,
@@ -169,8 +165,8 @@ export default function ChatInternal() {
         {
             id: 3,
             type: 'bot',
-            name: '조원빈',
-            text: "<strong>평소에 시간 날 때 자주 하는 게임 있어요?</strong>",
+            sender: '조원빈',
+            message: "<strong>평소에 시간 날 때 자주 하는 게임 있어요?</strong>",
             choice: ['요즘 우마무스메에 푹 빠져서 트레이너 생활 중이에요.', '그냥 평범한 퍼즐 게임이나 해요.'],
             response: [
                 `<strong>트레이너님이었어?! 어쩐지 기운이 남다르다 했어요! 제 육성 덱 봐주실래요? 이번 챔피언즈 미팅 너무 힘들거든요~</strong>`,
@@ -191,8 +187,23 @@ export default function ChatInternal() {
     const [isScrolling, setIsScrolling] = useState(false); //스크롤 유무
     const scrollTimeoutRef = useRef(null); //스크롤 타임아웃 훅
     const inputRef = useRef(null); //채팅 입력폼
-    const name = "조원빈"; //임시 봇 이름
-    const profile_img = null
+
+    useState(() => {
+        async function getMessages() {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/chat/${name}`, {
+                    withCredentials: true
+                });
+                const data = response.data.data;
+                console.log("받아온 데이터:", data);
+                setMessages(data.chat_history);
+            }
+            catch (e) {
+                console.log('에러 발생', e);
+            }
+        }
+        getMessages();
+    }, [])
 
     //메시지가 추가될 시 자동스크롤
     useEffect(() => {
@@ -207,21 +218,33 @@ export default function ChatInternal() {
         setWaitingReply(true);
         setMessages(prev => [
             ...prev,
-            { id: messages.length + 1, type: 'user', text: inputText }
+            { id: messages.length + 1, sender: 'user', message: inputText }
         ]);
-        setInputText("");
 
-        setTimeout(() => {
-            if (affection < 60) {
-                setMessages(prev => [
-                    ...prev,
-                    { id: messages.length + 1, type: 'bot', 'name': name, text: `테스트 답장입니다. id : ${messages.length + 1}` }
-                ])
+
+        async function getMessages() {
+            const body = { message: inputText };
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat/${name}`, body, {
+                    withCredentials: true
+                });
+                const data = response.data.data;
+                console.log("받아온 데이터:", data);
+                if (affection < 60) {
+                    setMessages(prev => [
+                        ...prev,
+                        { id: messages.length + 1, sender: 'ai', 'char_name': name, message: `${data.response}` }
+                    ])
+                    setWaitingReply(false);
+                    setAffection(data.progress.affinity);
+                }
             }
-            setWaitingReply(false);
-            setAffection(prev => prev + 5);
-        }, 100)
-
+            catch (e) {
+                console.log('에러 발생', e);
+            }
+        }
+        getMessages();
+        setInputText("");
     };
 
     //봇이 답장하면 기다림 상태 해제
@@ -238,8 +261,8 @@ export default function ChatInternal() {
             setEventStart(true);
             setMessages(prev => [
                 ...prev,
-                { id: messages.length + 1, type: 'system', text: '- 이벤트 발동 -' },
-                { id: messages.length + 2, type: 'bot', 'name': name, text: `${eventList[0].text}` }
+                { id: messages.length + 1, sender: 'system', message: '- 이벤트 발동 -' },
+                { id: messages.length + 2, sender: 'ai', 'char_name': name, message: `${eventList[0].text}` }
             ])
 
         }
@@ -274,11 +297,11 @@ export default function ChatInternal() {
     const eventChoice = (idx) => {
         setMessages(prev => [
             ...prev,
-            { id: messages.length + 1, type: 'user', text: `${eventList[evnetCount].choice[idx]}` }
+            { id: messages.length + 1, sender: 'user', message: `${eventList[evnetCount].choice[idx]}` }
         ])
         console.log(idx);
         setAffection(prev => prev + eventList[evnetCount].addAffection[idx]);
-        if (evnetCount+1 < eventList.length) {
+        if (evnetCount + 1 < eventList.length) {
             setEventCount(prev => prev + 1);
         }
         else {
@@ -290,7 +313,7 @@ export default function ChatInternal() {
         if (eventStart) {
             setMessages(prev => [
                 ...prev,
-                { id: messages.length + 1, type: 'bot', 'name': name, text: `${eventList[evnetCount].text}` }
+                { id: messages.length + 1, sender: 'ai', 'char_name': name, message: `${eventList[evnetCount].text}` }
             ])
         }
     }, [evnetCount])
@@ -308,13 +331,13 @@ export default function ChatInternal() {
             <Main $isScrolling={isScrolling} onScroll={handleScroll} ref={scrollRef}>
                 <ContentChat>
                     {messages.map((data, idx) => {
-                        if (data.type == 'bot') {
-                            return <BotBubble item={data} profile_img={profile_img} key={idx} />
+                        if (data.sender == 'ai') {
+                            return <BotBubble item={data} key={idx} />
                         }
-                        else if (data.type == 'user') {
+                        else if (data.sender == 'user') {
                             return <UserBubble item={data} key={idx} />
                         }
-                        else if (data.type == 'system') {
+                        else if (data.sender == 'system') {
                             return <SystemChat item={data} key={idx} />
                         }
                     })}

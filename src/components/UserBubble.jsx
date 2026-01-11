@@ -26,8 +26,7 @@ const UserContent = styled.div`
 
 
 export default function UserBubble(props) {
-    const name = props.item.name;
-    const content = props.item.text;
+    const content = props.item.message;
     return (
         <Container>
             <UserContentBox>

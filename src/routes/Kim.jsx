@@ -6,7 +6,7 @@ import Character from '../pages/Character';
 
 const KimRoutes = [
   {path: '/chat', element: <ChatMain/>},
-  {path: '/chat/:id', element: <ChatInternal/>},
+  {path: '/chat/:name', element: <ChatInternal/>},
   {path: '/ending', element: <Ending/>},
   {path: '/character/:id', element: <Character/>}
 ];

@@ -19,7 +19,7 @@ export default function SystemChat(props) {
     return (
         <Container>
             <SystemText>
-                {props.item.text}
+                {props.item.message}
             </SystemText>
         </Container>
     )

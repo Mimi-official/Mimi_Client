@@ -13,6 +13,10 @@ const BotProfile = styled.div`
     background-color: #D9D9D9;
     border-radius: 50%;
     overflow: hidden; 
+    
+    img {
+        width: 100%;
+    }
 `;
 
 const BotContents = styled.div`
@@ -50,9 +54,10 @@ const BotContent = styled.div`
 `
 
 export default function BotBubble(props) {
-    const name = props.item.name;
-    const profile_img = props.profile_img;
-    const content = props.item.text;
+    // console.log(props.item);
+    const name = props.item.char_name;
+    const profile_img = props.item.profile_img_url;
+    const content = props.item.message;
     return (
         <Container>
             <BotProfile>

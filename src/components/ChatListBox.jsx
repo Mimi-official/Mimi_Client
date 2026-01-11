@@ -13,6 +13,11 @@ const ProfileImg = styled.div`
     aspect-ratio: 1/1;
     border-radius: 50%;
     background-color: #D9D9D9;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+    }
 `;
 
 const ChatInfo = styled.div`
@@ -32,28 +37,40 @@ const ChatName = styled.p`
     line-height: 140%; /* 22.4px */
 `;
 
-const LastChat = styled.p`
+const LastChat = styled.div`
     color: var(--Grey-700, #616161);
     font-family: Pretendard;
     font-size: 14px;
-    font-style: normal;
     font-weight: 500;
-    line-height: 140%; /* 19.6px */
-    white-space: nowrap;      /* 줄바꿈 방지 */
-    overflow: hidden;         /* 영역을 벗어나는 내용 숨김 */
-    text-overflow: ellipsis;
-    width: 100%;
-`;
+    line-height: 140%;
 
+    width: 100%;
+    
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+
+    & * {
+        display: inline; 
+        margin: 0;
+        padding: 0;
+        font-weight: inherit; /* 내부 태그의 굵기 등 스타일 상속 */
+        color: inherit;
+    }
+
+    img {
+        display: none;
+    }
+`;
 export default function ChatListBox(props) {
     const navigate = useNavigate();
     const data = props.item;
-    const id = data.id;
-    const profile_img = data.img;
-    const name = data.name ?? '테스트';
-    const text = data.lastchat ?? '테스트 내용. 이게 보인다면 새로고침을 해보세요!';
+    const name = data.char_name;
+    const profile_img = data.profile_img_url;
+    const text = data.last_message ?? '테스트 내용. 이게 보인다면 새로고침을 해보세요!';
     return (
-        <Container onClick={() => navigate(`/chat/${id}`)}>
+        <Container onClick={() => navigate(`/chat/${name}`)}>
             <ProfileImg>
                 <img src={profile_img}/>
             </ProfileImg>
@@ -62,7 +79,7 @@ export default function ChatListBox(props) {
                     {name}
                 </ChatName>
                 <LastChat>
-                    {text}
+                    <p dangerouslySetInnerHTML={{__html : text}}></p>
                 </LastChat>
             </ChatInfo>
         </Container>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Menu from "../components/Menu";
 import profile from '../assets/images/wonbin/profile.png';
 import axios from "axios";
@@ -165,6 +165,11 @@ const StartBtn = styled.button`
     font-style: normal;
     font-weight: 700;
     line-height: 140%;
+    cursor: pointer;
+
+    &:hover {
+        background: #D3639D;
+    }
 `;
 
 const ResetBtn = styled.button`
@@ -183,30 +188,16 @@ const ResetBtn = styled.button`
     font-style: normal;
     font-weight: 700;
     line-height: 140%;
+    cursor: pointer;
 `;
 
 export default function Character() {
+    const navigate = useNavigate();
     const [isScrolling, setIsScrolling] = useState(false); //스크롤 유무
     const scrollTimeoutRef = useRef(null); //스크롤 타임아웃 훅
     const params = useParams();
     const id = params.id;
-    const [data, setData] = useState({
-        isEnd: true,
-        img_url: profile,
-        name: '조원빈',
-        title: '다정한 미소 뒤에 말(馬)에 대한 광기를 숨긴 채, 당신을 운명의 트레이너 혹은 자신의 애마로 길들이려 하는 200cm의 거구 덕후.',
-        hashtags: '#연하녀 #말덕후 #오타쿠 #서브컬쳐',
-        situation: `트랙 위의 흙먼지 속에서 찾아낸 나의 '운명적 기수'.<br>경마장의 함성 소리는 귀를 먹먹하게 만들고, 돈을 잃은 자들의 비명은 공기 중에 흩어진다. 나는 그 무질서한 열기 속에서
-        오직 한 곳, 말들의 근육이 뒤틀리는 출발선만을 응시하고 있었다.<br>그때, 마치 미리 짜놓은 각본처럼 내 옆자리에 한 여자가 스며들듯 앉았다. 세련된 옷차림, 다정한 미소. 하지만 그녀의
-        눈동자는 경마장의 그 누구보다도 깊은 광기를 품고 있었다.<br>그녀는 내가 쥐고 있는 마권이 아닌, 내가 말을 바라보는 '시선'을 읽어내려는 듯 빤히 쳐다보더니 입을 열었다.<br>"누구 찍으셨어요? 후훗, 눈빛을 보니 보통 안목이 아니신 것 같아서요." 그녀의 목소리는
-        다정했지만, 마치 거대한 경주마가 콧김을 내뿜는 듯한 압박감이 느껴졌다.<br>이것은 단순한 만남이 아니다. 그녀는 지금 나를 테스트하고 있다. 내가 그녀의 '말'이 될 수 있는지, 혹은
-        그녀와 함께 말을 돌볼 '트레이너'가 될 수 있는지.`,
-        info: "조원빈 (20세, 200cm)<br>평소엔 누구에게나 친절한 '연하녀'의 정석이지만, 말(馬)과 관련된 순간 눈빛이 서늘하게 변하는 반전의 소유자.",
-        personality: `성격: 조원빈은 평소에는 다정하고 세련된 연하녀의 모습이지만, '말'과 '우마무스메'에 관련된 일이라면 앞뒤 가리지 않는 광적인 집착을 보입니다.<br>
-        - 지독한 말 덕후: 인생의 모든 기준이 말입니다. 대화 도중에도 말 근육이나 털색을 분석하며, 실제 경마장과 게임(우마무스메)을 넘나드는 진성 덕후입니다.<br>
-        - 금발 미남 & 갈색 말 취향: 겉으로는 화려한 금발 기수나 금발 말에 환호하지만, 마음속 깊은 곳엔 '아그네스 타키온' 같은 매력적인 갈색 말을 향한 진한 애정이 있습니다.<br>
-        - 트레이너 집착: 자신과 말이 통하는(말 덕질이 가능한) 사람을 발견하면 '운명의 트레이너'라 부르며 무섭게 몰입합니다.`
-    });
+    const [data, setData] = useState({});
 
     useEffect(() => {
         async function getData() {
@@ -241,12 +232,36 @@ export default function Character() {
         };
     }, []);
 
-    const handleStart = () => {
+    const handleStart = (chatting) => {
+        const body = { character_id: id };
+        async function gameStart() {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat/start`, body, {
+                withCredentials: true
+            });
+            console.log(response.data);
+            navigate(`/chat/${data.name}`)
+        }
 
+        if (chatting) {
+            navigate(`/chat/${data.name}`)
+        }
+        else {
+            gameStart();
+        }
     }
 
     const handleReset = () => {
-
+        const body = { character_id: id };
+        async function gameStart() {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat/start`, body, {
+                withCredentials: true
+            });
+            console.log(response.data);
+            navigate(`/chat/${data.name}`)
+        }
+        if (confirm('정말 초기화 후 다시 시작하시겠습니까?')) {
+            gameStart();
+        }
     }
 
     return (
@@ -254,7 +269,7 @@ export default function Character() {
             <Main $isScrolling={isScrolling} onScroll={handleScroll}>
                 <MainContent>
                     <Picture>
-                        <img src={data.img_url} />
+                        <img src={data.profile_img_url} />
                         <Gradient />
                         <CharacterName>
                             {data.name}
@@ -280,10 +295,10 @@ export default function Character() {
                         </CharacterInfo>
                     </Content>
                     <StartBtnBox>
-                        <StartBtn onClick={() => handleStart()}>
-                            {data.isEnd ? '이어하기' : '시작하기'}
+                        <StartBtn onClick={() => handleStart(data.user_progress?.is_chatting)}>
+                            {data.user_progress?.is_chatting ? '이어하기' : '시작하기'}
                         </StartBtn >
-                        {data.isEnd &&
+                        {data.user_progress?.is_chatting &&
                             <ResetBtn onClick={() => handleReset()}>
                                 초기화
                             </ResetBtn>
