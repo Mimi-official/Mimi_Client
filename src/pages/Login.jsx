@@ -162,11 +162,20 @@ const Login = () => {
             withCredentials: true
           }
         );
-        console.log('요청 성공');
-        console.log(response);
+        
+        if (response.status === 200){
+          alert('로그인 성공');
+          navigate('/home');
+        }
       }
-      catch (e) {
-        console.log('에러 발생 : ', e);
+      catch (error) {
+        if (error.response.status == 401) {
+          alert('아이디 또는 비밀번호가 일치하지 않습니다');
+        }
+        else {
+          alert('로그인 과정에서 에러가 발생했습니다');
+          console.log('에러 발생 : ', error);
+        }
       }
     }
     login();
