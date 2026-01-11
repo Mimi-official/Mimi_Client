@@ -221,7 +221,7 @@ export default function MyPage() {
     const handleLogout = () => {
         async function logout() {
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/logout`, 
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/logout`,
                     {},
                     { withCredentials: true }
                 );
@@ -246,13 +246,12 @@ export default function MyPage() {
         async function accountDelete(pw) {
             try {
                 const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/auth/delete`, {
-                    password: pw
-                }, {
+                    data: { password: pw },
                     withCredentials: true
                 });
 
                 if (response.status === 200) {
-                    alert('회원이 탈퇴되었습니다.');
+                    alert('탈퇴되었습니다.');
                     navigate('/')
                 }
             }
