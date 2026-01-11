@@ -62,8 +62,7 @@ const CardBackground = styled.div`
     height: 100%;
     position: relative;
     inset: 0;
-    background-color: #d9d9d9;
-    background-image: ${props => props.$image ? `url(${props.$image})` : 'none'};
+    background: ${props => props.$image ? `url(${props.$image})` : '#d9d9d9'};
     background-size: cover;
     background-position: center;
 `;
@@ -159,7 +158,7 @@ export default function Home() {
     useEffect(() => {
         async function getData() {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/api/characters/');
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/characters/`);
                 const data = response.data.data;
                 console.log("받아온 데이터:", data);
                 setCharacters(data);
