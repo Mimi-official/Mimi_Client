@@ -210,7 +210,7 @@ export default function MyPage() {
                 })
                 setData(response.data.data);
             }
-            catch(e) {
+            catch (e) {
                 alert('회원정보가 옳바르지 않습니다.');
                 console.log(e);
             }
@@ -221,44 +221,51 @@ export default function MyPage() {
     const handleLogout = () => {
         async function logout() {
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
-                    withCredentials: true
-                })
-                
-                if(response.status === 200) {
-                    alert('로그아웃 되었습니다.');
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/logout`, 
+                    {},
+                    { withCredentials: true }
+                );
+
+                if (response.status === 200) {
+                    alert('로그아웃 성공.');
                     navigate('/')
                 }
             }
-            catch(e) {
+            catch (e) {
+                alert("로그아웃 실패")
                 console.log(e)
             }
         }
-        
+
         if (confirm("정말 로그아웃 하시겠습니까?")) {
             logout();
         }
     }
 
     const handleDelete = () => {
-        async function accountDelete() {
+        async function accountDelete(pw) {
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/delete`, {
+                const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/auth/delete`, {
+                    password: pw
+                }, {
                     withCredentials: true
-                })
-                
-                if(response.status === 200) {
+                });
+
+                if (response.status === 200) {
                     alert('회원이 탈퇴되었습니다.');
                     navigate('/')
                 }
             }
-            catch(e) {
+            catch (e) {
                 console.log(e)
             }
         }
-        
+
         if (confirm("정말 회원탈퇴를 하시겠습니까?")) {
-            accountDelete();
+            const password = prompt("본인 확인을 위해 비밀번호를 입력해주세요.")
+            if (password.trim()) {
+                accountDelete(password);
+            }
         }
     }
 
@@ -274,14 +281,14 @@ export default function MyPage() {
                     <AvatarCircle />
                     <NameWrapper>
                         {data?.nickname}
-                        <EditIcon onClick={() => {alert("준비중인 기능입니다.")}}><IconPencil /></EditIcon>
+                        <EditIcon onClick={() => { alert("준비중인 기능입니다.") }}><IconPencil /></EditIcon>
                     </NameWrapper>
                 </ProfileCard>
 
                 <SectionTitle>내 계정</SectionTitle>
                 <MenuBox>
-                    <MenuItem onClick={() => {handleLogout()}}>로그아웃</MenuItem>
-                    <MenuItem onClick={() => {handleDelete()}}>회원탈퇴</MenuItem>
+                    <MenuItem onClick={() => { handleLogout() }}>로그아웃</MenuItem>
+                    <MenuItem onClick={() => { handleDelete() }}>회원탈퇴</MenuItem>
                 </MenuBox>
             </ContentArea>
 
