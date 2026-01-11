@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import HomeIcon from "../assets/images/home_icon.svg?react";
 import ChatIcon from "../assets/images/chat_icon.svg?react";
 import MypageIcon from "../assets/images/mypage_icon.svg?react";
+import axios from 'axios';
 
 // Color palette
 const PINK = '#FF66C4';
@@ -159,7 +160,7 @@ const NameWrapper = styled.div`
   color: #424242;
 `;
 
-const EditIcon = styled.span`
+const EditIcon = styled.div`
   color: #999;
   font-size: 14px;
   cursor: pointer;
@@ -198,6 +199,69 @@ const IconPencil = () => (
 );
 
 export default function MyPage() {
+    const navigate = useNavigate();
+    const [data, setData] = useState();
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+                    withCredentials: true
+                })
+                setData(response.data.data);
+            }
+            catch(e) {
+                alert('회원정보가 옳바르지 않습니다.');
+                console.log(e);
+            }
+        }
+        fetchData();
+    }, [])
+
+    const handleLogout = () => {
+        async function logout() {
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
+                    withCredentials: true
+                })
+                
+                if(response.status === 200) {
+                    alert('로그아웃 되었습니다.');
+                    navigate('/')
+                }
+            }
+            catch(e) {
+                console.log(e)
+            }
+        }
+        
+        if (confirm("정말 로그아웃 하시겠습니까?")) {
+            logout();
+        }
+    }
+
+    const handleDelete = () => {
+        async function accountDelete() {
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/delete`, {
+                    withCredentials: true
+                })
+                
+                if(response.status === 200) {
+                    alert('회원이 탈퇴되었습니다.');
+                    navigate('/')
+                }
+            }
+            catch(e) {
+                console.log(e)
+            }
+        }
+        
+        if (confirm("정말 회원탈퇴를 하시겠습니까?")) {
+            accountDelete();
+        }
+    }
+
     return (
         <ScreenContainer>
 
@@ -209,15 +273,15 @@ export default function MyPage() {
                 <ProfileCard>
                     <AvatarCircle />
                     <NameWrapper>
-                        한지연
-                        <EditIcon><IconPencil /></EditIcon>
+                        {data?.nickname}
+                        <EditIcon onClick={() => {alert("준비중인 기능입니다.")}}><IconPencil /></EditIcon>
                     </NameWrapper>
                 </ProfileCard>
 
                 <SectionTitle>내 계정</SectionTitle>
                 <MenuBox>
-                    <MenuItem>로그아웃</MenuItem>
-                    <MenuItem>회원탈퇴</MenuItem>
+                    <MenuItem onClick={() => {handleLogout()}}>로그아웃</MenuItem>
+                    <MenuItem onClick={() => {handleDelete()}}>회원탈퇴</MenuItem>
                 </MenuBox>
             </ContentArea>
 

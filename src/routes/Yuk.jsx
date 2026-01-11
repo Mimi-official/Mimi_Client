@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import Mypage from '../pages/mypage';
+import Mypage from '../pages/Mypage';
 
 const YukRoutes = [
     { path: '/mypage', element: <Mypage /> }
