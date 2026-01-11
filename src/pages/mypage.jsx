@@ -245,7 +245,7 @@ export default function MyPage() {
     const handleDelete = () => {
         async function accountDelete(pw) {
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/delete`, {
+                const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/auth/delete`, {
                     password: pw
                 }, {
                     withCredentials: true
