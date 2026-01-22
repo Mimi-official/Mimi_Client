@@ -181,7 +181,6 @@ const Signup = () => {
       <form onSubmit={(e) => {handleSignup(e)}}>
         <TitleText>회원가입</TitleText>
 
-        {/* 닉네임 영역 */}
         <NicknameLayout>
           <Label htmlFor="nickname">닉네임</Label>
           <InputField
@@ -194,7 +193,6 @@ const Signup = () => {
           />
         </NicknameLayout>
 
-        {/* 아이디 영역 */}
         <IdLayout>
           <Label htmlFor="userId">아이디</Label>
           <InputField
@@ -208,7 +206,6 @@ const Signup = () => {
           />
         </IdLayout>
 
-        {/* 비밀번호 영역 */}
         <PasswordLayout>
           <Label htmlFor="userPw">비밀번호</Label>
           <InputField
@@ -221,7 +218,6 @@ const Signup = () => {
           />
         </PasswordLayout>
 
-        {/* 가입하기 버튼 */}
         <SignupButton type="submit">
           <ButtonText>가입하기</ButtonText>
         </SignupButton>

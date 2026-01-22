@@ -155,7 +155,6 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     const data = { password: userPw, username: userId };
-    console.log('로그인 시도 데이터 : ', data);
     async function login() {
       try {
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`,
@@ -188,7 +187,6 @@ const Login = () => {
       <form onSubmit={(e) => { handleLogin(e) }}>
         <LoginText>로그인</LoginText>
 
-        {/* 아이디 영역 */}
         <LoginLayout>
           <Label htmlFor="userId">아이디</Label>
           <InputField
@@ -200,7 +198,6 @@ const Login = () => {
           />
         </LoginLayout>
 
-        {/* 비밀번호 영역 */}
         <PasswordLayout>
           <Label htmlFor="userPw">비밀번호</Label>
           <InputField
@@ -212,12 +209,10 @@ const Login = () => {
           />
         </PasswordLayout>
 
-        {/* 로그인 버튼 (내부에 ButtonText 적용) */}
         <LoginButton type="submit">
           <ButtonText>로그인</ButtonText>
         </LoginButton>
 
-        {/* 회원가입 텍스트 */}
         <SignupText href="#" onClick={() => navigate('/signup')}>회원가입</SignupText>
       </form>
     </Container>
