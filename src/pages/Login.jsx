@@ -152,8 +152,10 @@ const Login = () => {
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
     const data = { password: userPw, username: userId };
+    console.log('로그인 시도 데이터 : ', data);
     async function login() {
       try {
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`,
@@ -162,8 +164,8 @@ const Login = () => {
             withCredentials: true
           }
         );
-        
-        if (response.status === 200){
+
+        if (response.status === 200) {
           alert('로그인 성공');
           navigate('/home');
         }
@@ -183,42 +185,43 @@ const Login = () => {
 
   return (
     <Container>
-      <LoginText>로그인</LoginText>
+      <form onSubmit={(e) => { handleLogin(e) }}>
+        <LoginText>로그인</LoginText>
 
-      {/* 아이디 영역 */}
-      <LoginLayout>
-        <Label htmlFor="userId">아이디</Label>
-        <InputField
-          id="userId"
-          type="text"
-          placeholder="아이디를 입력해주세요."
-          onChange={(e) => setUserId(e.target.value)}
-        />
-      </LoginLayout>
+        {/* 아이디 영역 */}
+        <LoginLayout>
+          <Label htmlFor="userId">아이디</Label>
+          <InputField
+            id="userId"
+            type="text"
+            placeholder="아이디를 입력해주세요."
+            onChange={(e) => setUserId(e.target.value)}
+            required
+          />
+        </LoginLayout>
 
-      {/* 비밀번호 영역 */}
-      <PasswordLayout>
-        <Label htmlFor="userPw">비밀번호</Label>
-        <InputField
-          id="userPw"
-          type="password"
-          placeholder="비밀번호를 입력해주세요."
-          onChange={(e) => setUserPw(e.target.value)}
-        />
-      </PasswordLayout>
+        {/* 비밀번호 영역 */}
+        <PasswordLayout>
+          <Label htmlFor="userPw">비밀번호</Label>
+          <InputField
+            id="userPw"
+            type="password"
+            placeholder="비밀번호를 입력해주세요."
+            onChange={(e) => setUserPw(e.target.value)}
+            required
+          />
+        </PasswordLayout>
 
-      {/* 로그인 버튼 (내부에 ButtonText 적용) */}
-      <LoginButton onClick={() => handleLogin()}>
-        <ButtonText>로그인</ButtonText>
-      </LoginButton>
+        {/* 로그인 버튼 (내부에 ButtonText 적용) */}
+        <LoginButton type="submit">
+          <ButtonText>로그인</ButtonText>
+        </LoginButton>
 
-      {/* 회원가입 텍스트 */}
-      <SignupText href="#" onClick={() => navigate('/signup')}>회원가입</SignupText>
-
+        {/* 회원가입 텍스트 */}
+        <SignupText href="#" onClick={() => navigate('/signup')}>회원가입</SignupText>
+      </form>
     </Container>
   );
 };
-
-
 
 export default Login;

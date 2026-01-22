@@ -147,7 +147,8 @@ const Signup = () => {
   const [userPw, setUserPw] = useState("");
   const [userNick, setUserNick] = useState("");
 
-  const handleSignup = () => {
+  const handleSignup = (e) => {
+    e.preventDefault();
     const data = { nickname: userNick, password: userPw, username: userId, };
     async function login() {
       try {
@@ -165,7 +166,7 @@ const Signup = () => {
       }
       catch (error) {
         if (error.response.status === 400) {
-          alert('이미 존재하는 아이디입니다.');
+          alert(error.response.data.message);
         }
         else {
           console.log('에러 발생 : ', error);
@@ -177,50 +178,54 @@ const Signup = () => {
 
   return (
     <Container>
-      <TitleText>회원가입</TitleText>
+      <form onSubmit={(e) => {handleSignup(e)}}>
+        <TitleText>회원가입</TitleText>
 
-      {/* 닉네임 영역 */}
-      <NicknameLayout>
-        <Label htmlFor="nickname">닉네임</Label>
-        <InputField
-          id="nickname"
-          type="text"
-          placeholder="닉네임을 입력해주세요."
-          minLength={2}
-          onChange={(e) => setUserNick(e.target.value)}
-        />
-      </NicknameLayout>
+        {/* 닉네임 영역 */}
+        <NicknameLayout>
+          <Label htmlFor="nickname">닉네임</Label>
+          <InputField
+            id="nickname"
+            type="text"
+            placeholder="닉네임을 입력해주세요."
+            minLength={2}
+            onChange={(e) => setUserNick(e.target.value)}
+            required
+          />
+        </NicknameLayout>
 
-      {/* 아이디 영역 */}
-      <IdLayout>
-        <Label htmlFor="userId">아이디</Label>
-        <InputField
-          id="userId"
-          type="text"
-          placeholder="아이디를 입력해주세요."
-          minLength={3}
-          maxLength={20}
-          onChange={(e) => setUserId(e.target.value)}
-        />
-      </IdLayout>
+        {/* 아이디 영역 */}
+        <IdLayout>
+          <Label htmlFor="userId">아이디</Label>
+          <InputField
+            id="userId"
+            type="text"
+            placeholder="아이디를 입력해주세요."
+            minLength={3}
+            maxLength={20}
+            onChange={(e) => setUserId(e.target.value)}
+            required
+          />
+        </IdLayout>
 
-      {/* 비밀번호 영역 */}
-      <PasswordLayout>
-        <Label htmlFor="userPw">비밀번호</Label>
-        <InputField
-          id="userPw"
-          type="password"
-          placeholder="비밀번호를 입력해주세요."
-          minLength={6}
-          onChange={(e) => setUserPw(e.target.value)}
-        />
-      </PasswordLayout>
+        {/* 비밀번호 영역 */}
+        <PasswordLayout>
+          <Label htmlFor="userPw">비밀번호</Label>
+          <InputField
+            id="userPw"
+            type="password"
+            placeholder="비밀번호를 입력해주세요."
+            minLength={6}
+            onChange={(e) => setUserPw(e.target.value)}
+            required
+          />
+        </PasswordLayout>
 
-      {/* 가입하기 버튼 */}
-      <SignupButton onClick={() => handleSignup()}>
-        <ButtonText>가입하기</ButtonText>
-      </SignupButton>
-
+        {/* 가입하기 버튼 */}
+        <SignupButton type="submit">
+          <ButtonText>가입하기</ButtonText>
+        </SignupButton>
+      </form>
     </Container>
   );
 };
