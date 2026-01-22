@@ -141,13 +141,7 @@ export default function ChatInternal() {
                     withCredentials: true
                 });
                 const data = response.data.data;
-                // 백엔드 데이터 구조에 맞춰서 설정 (chat_history는 배열)
                 setMessages(data.chat_history || []);
-
-                // 마지막 상태에 따라 호감도 등 초기화가 필요하다면 여기서 수행
-                if (data.chat_history.length > 0) {
-                    // 필요 시 마지막 메시지의 호감도 등을 세팅 가능
-                }
             }
             catch (e) {
                 console.log('초기 메시지 로드 에러', e);
@@ -156,12 +150,11 @@ export default function ChatInternal() {
         getMessages();
     }, [name]);
 
-    // 스크롤 자동 이동
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    }, [messages, currentChoices]); // 선택지가 뜰 때도 스크롤 조정
+    }, [messages, currentChoices]);
 
     // 2. 메시지 전송 (채팅)
     const handleSend = async () => {
@@ -260,7 +253,6 @@ export default function ChatInternal() {
         setCurrentChoices([]);
 
         try {
-            // 백엔드 handle_choice는 choice_index 1, 2, 3을 기대하므로 idx + 1
             const body = { choice_index: idx + 1 };
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat/${name}`, body, {
                 withCredentials: true
@@ -312,10 +304,6 @@ export default function ChatInternal() {
         }
     };
 
-    // useEffect(() => {
-    //     fetchCurrentEvent();
-    // }, [])
-
     return (
         <Container>
             <Header>
@@ -330,7 +318,6 @@ export default function ChatInternal() {
                 <ContentChat>
                     {messages.map((data, idx) => {
                         if (data.sender === 'ai') {
-                            // [수정] 백엔드에서 온 profile_img_url 전달
                             return <BotBubble item={data} key={idx} />
                         }
                         else if (data.sender === 'user') {
@@ -359,7 +346,6 @@ export default function ChatInternal() {
                     </InputChat>
 
                     : <EventChoice>
-                        {/* 서버에서 받아온 선택지 렌더링 */}
                         {currentChoices && currentChoices.map((item, idx) => {
                             if (item) {
                                 return (
