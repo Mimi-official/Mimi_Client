@@ -339,6 +339,7 @@ export default function ChatInternal() {
                             onKeyDown={handleKeyDown}
                             disabled={waitingReply}
                             ref={inputRef}
+                            maxLength={300}
                         />
                         <SendBtnWapper onClick={() => handleSend()}>
                             <ChatSendIcon />
