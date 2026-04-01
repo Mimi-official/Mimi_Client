@@ -70,14 +70,25 @@ const BottomBox = styled.div`
     background: #FFF;
 `;
 
-const InputText = styled.input`
-    display: flexbox;
+const InputText = styled.textarea`
     flex: 1;
-    height: 36px;
     background-color: rgba(106, 106, 112, 0.18);
     border: none;
     border-radius: 10px;
-    padding: 0px 15px;
+    font-family: "Pretendard Variable";
+    font-size: 13px;
+    font-weight: 500;
+    
+    line-height: 20px; /* 명확한 줄 높이 지정 */
+    padding: 10px 12px; /* 위아래 패딩으로 한 줄일 때 정중앙에 있는 듯한 느낌을 줌 */
+    min-height: 40px; /* 처음 시작할 때의 기본 높이 (line-height + padding 위아래) */
+    max-height: 100px; /* 너무 길어지면 채팅창을 가리므로 최대 높이 제한 */
+    
+    box-sizing: border-box;
+    resize: none; /* 사용자가 임의로 크기 조절하는 것 방지 */
+    overflow-y: auto; /* max-height를 넘어가면 내부에 스크롤 생성 */
+    
+    &::-webkit-scrollbar { display: none; } /* 스크롤바 숨기기 (선택사항) */
     &:focus { outline: none; }
 `;
 
@@ -304,6 +315,16 @@ export default function ChatInternal() {
         }
     };
 
+    // 기존 코드: const [inputText, setInputText] = useState(""); 아래쯤에 추가
+    const handleInputChange = (e) => {
+        setInputText(e.target.value);
+
+        if (inputRef.current) {
+            inputRef.current.style.height = 'auto'; // 높이를 먼저 초기화
+            inputRef.current.style.height = inputRef.current.scrollHeight + 'px'; // 스크롤 길이에 맞춰 높이 재설정
+        }
+    };
+
     return (
         <Container>
             <Header>
@@ -335,11 +356,12 @@ export default function ChatInternal() {
                         <InputText
                             placeholder={waitingReply ? '답장을 기다리는 중...' : '내용을 입력하여 대화를 시작해주세요.'}
                             value={inputText}
-                            onChange={(e) => setInputText(e.target.value)}
+                            onChange={handleInputChange} // <-- 여기를 교체합니다!
                             onKeyDown={handleKeyDown}
                             disabled={waitingReply}
                             ref={inputRef}
                             maxLength={300}
+                            rows={1} /* 추가: 기본 1줄 렌더링 */
                         />
                         <SendBtnWapper onClick={() => handleSend()}>
                             <ChatSendIcon />
